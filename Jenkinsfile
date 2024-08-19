@@ -27,6 +27,7 @@ pipeline {
             steps {
                 script {
                     // Command to destroy the infrastructure
+                    sh 'terraform workspace select Terraform-Standalone'
                     sh 'terraform destroy -auto-approve'
                 }
             }
