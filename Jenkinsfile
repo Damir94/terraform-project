@@ -15,27 +15,27 @@ pipeline {
             }
         }
         
-        stage('Init') {
+        stage('Terraform Init') {
             steps {
-                sh 'terraform init'
+                script {
+                    sh 'terraform init'
+                }
             }
         }
-        
-        stage('Plan') {
+
+        stage('Terraform Destroy') {
             steps {
-                sh 'terraform plan -out=tfplan'
-            }
-        }
-        
-        stage('Apply') {
-            steps {
-                sh 'terraform apply -input=false tfplan'
+                script {
+                    // Command to destroy the infrastructure
+                    sh 'terraform destroy -auto-approve'
+                }
             }
         }
     }
-
+    
     post {
         always {
+            // Clean up workspace or send notifications
             cleanWs()
         }
     }
