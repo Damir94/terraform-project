@@ -111,7 +111,7 @@ resource "aws_lb_listener_rule" "videos_rule" {
 # Launch Configuration for Images instances
 resource "aws_launch_configuration" "images_lc" {
   name          = "images-launch-configuration"
-  image_id      = "ami-0ae8f15ae66fe8cda"  # Replace with a valid AMI ID
+  image_id      = "ami-066784287e358dad1"  # Replace with a valid AMI ID
   instance_type = "t2.micro"
   associate_public_ip_address = true
   lifecycle {
@@ -142,7 +142,7 @@ resource "aws_launch_configuration" "images_lc" {
 # Launch Configuration for Videos instances
 resource "aws_launch_configuration" "videos_lc" {
   name          = "videos-launch-configuration"
-  image_id      = "ami-0ae8f15ae66fe8cda"  # Replace with a valid AMI ID
+  image_id      = "ami-066784287e358dad1"  # Replace with a valid AMI ID
   instance_type = "t2.micro"
   associate_public_ip_address = true
   lifecycle {
