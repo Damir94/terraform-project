@@ -157,7 +157,7 @@ resource "aws_launch_configuration" "videos_lc" {
               # Add your custom setup scripts here
               sudo amazon-linux-extras install epel -y
               sudo yum install stress -y
-              stress --cpu 2 --timeout 30000
+              stress --cpu 1 --timeout 30000
               yum install -y htop
               EOF
 
