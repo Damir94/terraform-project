@@ -21,7 +21,7 @@ pipeline {
         
         stage('Plan') {
             steps {
-                sh 'terraform plan -input=false tfplan'
+                sh 'terraform plan -input=false -out=tfplan'
             }
         }
         
