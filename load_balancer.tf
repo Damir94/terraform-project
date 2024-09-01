@@ -195,9 +195,25 @@ resource "aws_autoscaling_group" "videos_asg" {
   ]
   target_group_arns = [aws_lb_target_group.videos_tg.arn]
 
+  # Attach the CPU scaling policy
+  scaling_policy {
+    name               = "scale-up-on-cpu"
+    adjustment_type    = "ChangeInCapacity"
+    scaling_adjustment = 1
+    cooldown           = 300
+    policy_type        = "TargetTrackingScaling"
+    target_tracking_configuration {
+      predefined_metric_specification {
+        predefined_metric_type = "ASGAverageCPUUtilization"
+      }
+      target_value = 50.0  # Trigger scaling when CPU utilization exceeds 50%
+    }
+  }
+  
   tag {
     key                 = "Name"
     value               = "Videos Instance"
     propagate_at_launch = true
   }
 }
+
