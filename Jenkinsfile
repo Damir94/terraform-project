@@ -35,7 +35,7 @@ pipeline {
             steps { 
                 script {
                     echo "Waiting for 5 minutes before destroying the infrastructure..."
-                    sleep 300  // Sleep for 300 seconds (5 minutes)
+                    sleep 120  // Sleep for 300 seconds (5 minutes)
                 }
             } 
         }
