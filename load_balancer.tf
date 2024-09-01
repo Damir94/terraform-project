@@ -158,7 +158,7 @@ resource "aws_launch_configuration" "videos_lc" {
               sudo amazon-linux-extras install epel -y
               sudo yum install stress -y
               stress --cpu 1 --timeout 30000
-              yum install -y htop
+              #yum install -y htop
               EOF
 
   key_name = "my-key"  # Replace with your key pair name
@@ -194,21 +194,6 @@ resource "aws_autoscaling_group" "videos_asg" {
     aws_subnet.public_subnet_2.id
   ]
   target_group_arns = [aws_lb_target_group.videos_tg.arn]
-
-  # Attach the CPU scaling policy
-  scaling_policy {
-    name               = "scale-up-on-cpu"
-    adjustment_type    = "ChangeInCapacity"
-    scaling_adjustment = 1
-    cooldown           = 300
-    policy_type        = "TargetTrackingScaling"
-    target_tracking_configuration {
-      predefined_metric_specification {
-        predefined_metric_type = "ASGAverageCPUUtilization"
-      }
-      target_value = 50.0  # Trigger scaling when CPU utilization exceeds 50%
-    }
-  }
   
   tag {
     key                 = "Name"
@@ -217,3 +202,56 @@ resource "aws_autoscaling_group" "videos_asg" {
   }
 }
 
+# CloudWatch Alarm for Videos Auto Scaling Group
+resource "aws_cloudwatch_metric_alarm" "videos_cpu_high" {
+  alarm_name                = "videos-cpu-high"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = 2
+  metric_name               = "CPUUtilization"
+  namespace                 = "AWS/EC2"
+  period                    = 60
+  statistic                 = "Average"
+  threshold                 = 75
+  alarm_description         = "Triggers scaling up when CPU utilization exceeds 75%"
+
+  dimensions = {
+    AutoScalingGroupName = aws_autoscaling_group.videos_asg.name
+  }
+
+  alarm_actions = [aws_autoscaling_policy.videos_scale_up.arn]
+}
+
+resource "aws_cloudwatch_metric_alarm" "videos_cpu_low" {
+  alarm_name                = "videos-cpu-low"
+  comparison_operator       = "LessThanOrEqualToThreshold"
+  evaluation_periods        = 2
+  metric_name               = "CPUUtilization"
+  namespace                 = "AWS/EC2"
+  period                    = 60
+  statistic                 = "Average"
+  threshold                 = 25
+  alarm_description         = "Triggers scaling down when CPU utilization drops below 25%"
+
+  dimensions = {
+    AutoScalingGroupName = aws_autoscaling_group.videos_asg.name
+  }
+
+  alarm_actions = [aws_autoscaling_policy.videos_scale_down.arn]
+}
+
+# Scaling Policy for Videos Auto Scaling Group
+resource "aws_autoscaling_policy" "videos_scale_up" {
+  name                   = "videos-scale-up"
+  scaling_adjustment     = 1
+  adjustment_type        = "ChangeInCapacity"
+  cooldown               = 300
+  autoscaling_group_name = aws_autoscaling_group.videos_asg.name
+}
+
+resource "aws_autoscaling_policy" "videos_scale_down" {
+  name                   = "videos-scale-down"
+  scaling_adjustment     = -1
+  adjustment_type        = "ChangeInCapacity"
+  cooldown               = 300
+  autoscaling_group_name = aws_autoscaling_group.videos_asg.name
+}
