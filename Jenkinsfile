@@ -21,13 +21,13 @@ pipeline {
         
         stage('Plan') {
             steps {
-                sh 'terraform plan -auto-approve'
+                sh 'terraform plan -input=false tfplan'
             }
         }
         
         stage('Apply') {
             steps {
-                sh 'terraform apply -auto-approve'
+                sh 'terraform apply -input=false tfplan'
             }
         }
 
