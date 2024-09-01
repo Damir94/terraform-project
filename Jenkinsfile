@@ -34,8 +34,7 @@ pipeline {
         stage('Wait Before Destroy') { 
             steps { 
                 script {
-                    echo "Waiting for 5 minutes before destroying the infrastructure..."
-                    sleep 120  // Sleep for 300 seconds (5 minutes)
+                    input message: 'Do you want to proceed with applying the Terraform destroy?', ok: 'Apply'
                 }
             } 
         }
