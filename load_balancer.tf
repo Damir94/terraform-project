@@ -1,4 +1,3 @@
-
 # Create the first Target Group for Images
 resource "aws_lb_target_group" "images_tg" {
   name     = "images-target-group"
