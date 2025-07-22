@@ -1,4 +1,5 @@
 
+
 # Create a security group for the instances
 resource "aws_security_group" "my_security_group" {
   name        = "my-instance-sg"
